@@ -20,11 +20,12 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     <header className={className}>
       <nav className="container mx-auto flex items-center justify-between p-4">
         {/* DESKTOP */}
-        <ul className="hidden md:flex space-x-8">
-          <li className="hover:text-gray-400">
+        <ul className="hidden md:flex space-x-8 ">
+          <li className="hover:text-gray-400 font-thin">
             <Link href={"/register"}>Bhutanese</Link>
           </li>
-          <li className="hover:text-gray-400">
+          <li className="hover:text-gray-400 font-thin
+          ">
             <Link href={"/register"}>International</Link>
           </li>
         </ul>

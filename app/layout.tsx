@@ -28,9 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${dmsans.variable} ${fanwood.variable} ${cinzel.variable} font-sans`}
-      >
+      <body className={`${dmsans.variable}`}>
         <main>{children}</main>
         <Toaster />
         <Footer />

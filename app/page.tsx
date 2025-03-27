@@ -9,8 +9,8 @@ export default function Home() {
   const router = useRouter();
   return (
     <>
-      <Header className="bg-transparent absolute text-white p-4 w-full" />
-      {/* <Guest /> */}
+      <Header className="bg-transparent text-white p-4 fixed w-full top-0 left-0 z-1" />
+      <Guest />
       <Button onClick={() => router.push("/register")}>Signup</Button>
     </>
   );
