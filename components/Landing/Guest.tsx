@@ -8,9 +8,13 @@ import f3 from "@/assets/Landing/f3.png";
 import f4 from "@/assets/Landing/f4.png";
 import f5 from "@/assets/Landing/f5.png";
 import f6 from "@/assets/Landing/f6.png";
+import i2 from "@/assets/Landing/i2.png";
+import i3 from "@/assets/Landing/i3.png";
 import { Card, CardContent } from "@/components/ui/card";
 import Autoplay from "embla-carousel-autoplay";
 import { Button } from "../ui/button";
+import { Settings } from "lucide-react";
+import Slider from "react-slick";
 
 import {
   Carousel,
@@ -19,6 +23,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+// Import Slider from react-slick or the appropriate library
 const guest = () => {
   const plugin = React.useRef(
     Autoplay({ delay: 2000, stopOnInteraction: true })
@@ -40,6 +45,34 @@ const guest = () => {
     { id: 5, image: f5, name: "Pants" },
     { id: 6, image: f6, name: "Shirt" },
   ];
+
+  const sliderSettings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slideToshow: 3,
+    slidesToScroll: 1,
+    centerMode: true,
+    centerPadding: "5px",
+    arrow: false,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          // centerPadding: '10px',
+        },
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
   return (
     <>
       <section
@@ -97,6 +130,82 @@ const guest = () => {
                 </Button>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+      <section>
+        <div className="grid grid-cols-3 grid-rows-2 gap-2 p-4 h-[600px]">
+          {/* First Image */}
+          <div className="relative col-span-2 row-span-1 h-full">
+            <Image
+              src={i2}
+              alt="Group of people"
+              layout="fill"
+              objectFit="cover"
+              className="grayscale"
+            />
+            <p className="absolute bottom-4 left-4 text-white text-xl font-semibold">
+              You Only Live Once
+            </p>
+          </div>
+          {/* Second Image (Blurred) */}
+          <div className="relative h-full">
+            <Image
+              src={i1}
+              alt="Blurred fashion"
+              layout="fill"
+              objectFit="cover"
+              className="blur-lg"
+            />
+          </div>
+          {/* Third Image */}
+          <div className="relative col-span-1 row-span-1 h-full">
+            <Image
+              src={i1}
+              alt="Fashion model"
+              layout="fill"
+              objectFit="cover"
+              className="grayscale"
+            />
+          </div>
+          {/* Fourth Image */}
+          <div className="relative col-span-2 row-span-1 h-full">
+            <Image
+              src={i3}
+              alt="Textile details"
+              layout="fill"
+              objectFit="cover"
+              className="grayscale"
+            />
+            <p className="absolute bottom-4 left-4 text-white text-xl font-semibold">
+              Fashion has no season
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="curveSlider bg-black py-12 overflow-hidden relative">
+        <div className="w-full mx-auto text-center carousel-wrapper relative">
+          <div className="absoulte left-1/2 tranform -translate-x-1/2 -translate-y-1/2 text-white text-8xl z-20 creationtype opacity-50">
+            Memories
+          </div>
+
+          <div>
+            {/* {slider} */}
+            <Slider {...sliderSettings}>
+              <div className="carousel-container">
+                <Image src={i1} alt="image1" layout="fill" objectFit="cover" className="memory" />
+              </div>
+              <div className="carousel-container">
+                <Image src={i1} alt="image1"  layout="fill" objectFit="cover" className="memory" />
+              </div>
+              <div className="carousel-container">
+                <Image src={i1} alt="image1" layout="fill" objectFit="cover" className="memory" />
+              </div>
+              <div className="carousel-container">
+                <Image src={i1} alt="image1" layout="fill" objectFit="cover" className="memory" />
+              </div>
+            </Slider>
           </div>
         </div>
       </section>

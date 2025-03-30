@@ -22,11 +22,11 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
         {/* DESKTOP */}
         <ul className="hidden md:flex space-x-8 ">
           <li className="hover:text-gray-400 font-thin">
-            <Link href={"/register"}>Bhutanese</Link>
+            <Link href={"/login"}>Bhutanese</Link>
           </li>
           <li className="hover:text-gray-400 font-thin
           ">
-            <Link href={"/register"}>International</Link>
+            <Link href={"/login"}>International</Link>
           </li>
         </ul>
         {/* logo */}
@@ -38,10 +38,10 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
 
         {/* ICONS */}
         <ul className="hidden md:flex space-x-8">
-          <Link href={"/register"} className="hover:text-gray-400">
+          <Link href={"/login"} className="hover:text-gray-400">
             <ShopIco />
           </Link>
-          <Link href={"/register"} className="hover:text-gray-400">
+          <Link href={"/login"} className="hover:text-gray-400">
             <ProIco />
           </Link>
         </ul>

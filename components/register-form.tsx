@@ -65,22 +65,21 @@ export function RegisterFormComponent() {
 
     console.log("Register Data", registerData);
     if (registerData.ok) {
-        
-        toast("Account created",{
+      toast("Account created", {
         description: "Your account has been created successfully.",
       });
       window.location.href = "/login";
     } else {
       const error = await registerData.json();
-      toast.error("Error",{
+      toast.error("Error", {
         description: error.message,
       });
     }
   };
 
   return (
-    <Card className="w-[350px]">
-      <CardHeader>
+    <Card className="w-[350px] h-[350px] p-5">
+      <CardHeader className="text-left pl-1.5">
         <CardTitle>Register</CardTitle>
         <CardDescription>Create a new account to get started.</CardDescription>
       </CardHeader>
@@ -88,7 +87,6 @@ export function RegisterFormComponent() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="name">Name</Label>
               <Input
                 id="name"
                 placeholder="Enter your name"
@@ -99,7 +97,6 @@ export function RegisterFormComponent() {
               )}
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -111,7 +108,6 @@ export function RegisterFormComponent() {
               )}
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -121,20 +117,6 @@ export function RegisterFormComponent() {
               {errors.password && (
                 <p className="text-sm text-red-500">
                   {errors.password.message}
-                </p>
-              )}
-            </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="Confirm your password"
-                {...register("confirmPassword")}
-              />
-              {errors.confirmPassword && (
-                <p className="text-sm text-red-500">
-                  {errors.confirmPassword.message}
                 </p>
               )}
             </div>

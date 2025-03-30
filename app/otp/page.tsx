@@ -1,10 +1,9 @@
 import React from "react";
-import logo from "@/assets/goldlogo.png";
 import background from "@/assets/form/formbg.png";
 import Image from "next/image";
-import { RegisterFormComponent } from "@/components/register-form";
+import {Otp} from "@/components/otp"
 
-const Register = () => {
+const page = () => {
   return (
     <div className="bg-black">
       <div
@@ -17,11 +16,11 @@ const Register = () => {
         className="h-dvh w-dvw"
       >
         <div className="h-dvh bg-gradient bg-gradient-to-b from-black/80 via-black/40 to-black/100 flex flex-col justify-center items-start pl-40">
-          <RegisterFormComponent />
+          <Otp />
         </div>
       </div>
     </div>
   );
 };
 
-export default Register;
+export default page;
