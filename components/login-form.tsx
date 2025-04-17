@@ -17,6 +17,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { toast } from "sonner"; // ✅ Correctly import toast
+import router from "next/router";
 
 // Define the schema using Zod
 const formSchema = z.object({
@@ -39,39 +40,37 @@ export function LoginFormComponent() {
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
-    setIsLoading(true);
-    try {
-      const loginData = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/user/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
+  // const onSubmit: SubmitHandler<FormData> = async (data) => {
+  //   setIsLoading(true);
+  //   try {
+  //     const loginData = await fetch(
+  //       `${process.env.NEXT_PUBLIC_BASE_URL}/user/login`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(data),
+  //       }
+  //     );
 
-      if (loginData.ok) {
-        const response = await loginData.json();
-        localStorage.setItem("token", response.token);
-        console.log("response", response);
-        toast.success("Login successful, Redirecting to dashboard");
-        window.localStorage.setItem("loggedIn", "true");
-        window.localStorage.setItem("userId", response.data.userData._id);
-        window.location.href = "/";
-      } else {
-        console.log("response", await loginData.json());
-        toast.error("Login failed: Invalid email or password");
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error("Login Error:", error);
-      toast.error("An unexpected error occurred.");
-      setIsLoading(false);
-    }
-  };
+  //     if (loginData.ok) {
+  //       const response = await loginData.json();
+  //       localStorage.setItem("token", response.token);
+  //       console.log("response", response);
+  //       toast.success("Login successful, Redirecting to home");
+  //       router.push("/home")
+  //     } else {
+  //       console.log("response", await loginData.json());
+  //       toast.error("Login failed: Invalid email or password");
+  //       setIsLoading(false);
+  //     }
+  //   } catch (error) {
+  //     console.error("Login Error:", error);
+  //     toast.error("An unexpected error occurred.");
+  //     setIsLoading(false);
+  //   }
+  // };
 
   return (
     <Card className="w-[350px] h-[350px] p-5">
@@ -82,7 +81,7 @@ export function LoginFormComponent() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form>
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Input
@@ -111,7 +110,7 @@ export function LoginFormComponent() {
           </div>
 
           <Button className="w-full mt-6" type="submit" disabled={isLoading}>
-            {isLoading ? "Logging in..." : "Log In"}
+            <Link href={"/home"}>{isLoading ? "Logging in..." : "Log In"}</Link>
           </Button>
           <Link
             href={"/forgotpassword"}

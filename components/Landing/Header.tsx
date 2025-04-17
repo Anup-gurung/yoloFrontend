@@ -7,6 +7,7 @@ import ShopIco from "@/assets/icons/shop";
 import ProIco from "@/assets/icons/profile";
 import Logo from "@/components/ui/logo";
 
+
 interface HeaderProps {
   className?: string;
 }
@@ -24,8 +25,10 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
           <li className="hover:text-gray-400 font-thin">
             <Link href={"/login"}>Bhutanese</Link>
           </li>
-          <li className="hover:text-gray-400 font-thin
-          ">
+          <li
+            className="hover:text-gray-400 font-thin
+          "
+          >
             <Link href={"/login"}>International</Link>
           </li>
         </ul>
