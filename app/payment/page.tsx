@@ -8,20 +8,52 @@ export default function CheckoutPage() {
         {/* Left side - form */}
         <div className="space-y-6">
           <h2 className="text-2xl font-semibold">Contact</h2>
-          <input type="email" placeholder="Email" className="input" />
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+          />
 
           <h2 className="text-2xl font-semibold">Delivery</h2>
-          <input type="text" placeholder="Country/Region" className="input" />
+          <input
+            type="text"
+            placeholder="Country/Region"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+          />
           <div className="grid grid-cols-2 gap-4">
-            <input type="text" placeholder="First Name" className="input" />
-            <input type="text" placeholder="Last Name" className="input" />
+            <input
+              type="text"
+              placeholder="First Name"
+              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+            />
+            <input
+              type="text"
+              placeholder="Last Name"
+              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+            />
           </div>
-          <input type="text" placeholder="Address" className="input" />
+          <input
+            type="text"
+            placeholder="Address"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+          />
           <div className="grid grid-cols-2 gap-4">
-            <input type="text" placeholder="City" className="input" />
-            <input type="text" placeholder="Postal code" className="input" />
+            <input
+              type="text"
+              placeholder="City"
+              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+            />
+            <input
+              type="text"
+              placeholder="Postal code"
+              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+            />
           </div>
-          <input type="text" placeholder="Phone" className="input" />
+          <input
+            type="text"
+            placeholder="Phone"
+            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+          />
 
           <h2 className="text-2xl font-semibold">Payment</h2>
           <div className="border p-4 rounded-lg">
@@ -95,12 +127,6 @@ export default function CheckoutPage() {
           <button className="border mt-4 px-4 py-2 rounded-md">Back</button>
         </div>
       </div>
-
-      <style jsx>{`
-        .input {
-          @apply w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black;
-        }
-      `}</style>
     </div>
   );
 }
