@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Header from "@/components/Landing/LoggedInHeader";
 import SearchBar from "@/components/customUI/Search";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import Autoplay from "embla-carousel-autoplay";
+import { Button } from "../../components/ui/button";
+import Selection from "@/components/selected";
+
 import {
   Carousel,
   CarouselContent,
