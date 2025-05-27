@@ -18,12 +18,15 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
-// Define the form schema using Zod
+// ✅ Zod validation schema
 const formSchema = z
   .object({
-    name: z
+    firstName: z
       .string()
-      .min(2, { message: "Name must be at least 2 characters long" }),
+      .min(2, { message: "First name must be at least 2 characters long" }),
+    lastName: z
+      .string()
+      .min(2, { message: "Last name must be at least 2 characters long" }),
     email: z.string().email({ message: "Invalid email address" }),
     password: z
       .string()
@@ -35,7 +38,6 @@ const formSchema = z
     path: ["confirmPassword"],
   });
 
-// Define the form's input types
 type FormData = z.infer<typeof formSchema>;
 
 export function RegisterFormComponent() {
@@ -52,33 +54,57 @@ export function RegisterFormComponent() {
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     setIsLoading(true);
 
-    const registerData = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/user/signUp`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    // Auto-determine userType
+    const userType = data.email.toLowerCase().startsWith("admin")
+      ? "ADMIN"
+      : "USER";
 
-    console.log("Register Data", registerData);
-    if (registerData.ok) {
-      toast("Account created", {
-        description: "Your account has been created successfully.",
+    // Final payload
+    const payload = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      password: data.password,
+      enabled: true,
+      userType,
+    };
+    console.log("this is the payload", payload);
+
+
+    try {
+      const registerData = await fetch(
+        `http://localhost:8765/USER-SERVICE/api/users`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (registerData.ok) {
+        toast("Account created", {
+          description: "Your account has been created successfully.",
+        });
+        window.location.href = "/login";
+      } else {
+        const error = await registerData.json();
+        toast.error("Error", {
+          description: error.message || "Registration failed.",
+        });
+      }
+    } catch (error) {
+      toast.error("Unexpected Error", {
+        description: "Something went wrong. Please try again.",
       });
-      window.location.href = "/login";
-    } else {
-      const error = await registerData.json();
-      toast.error("Error", {
-        description: error.message,
-      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <Card className="w-[350px] h-[350px] p-5">
+    <Card className="w-[350px] p-5">
       <CardHeader className="text-left pl-1.5">
         <CardTitle>Register</CardTitle>
         <CardDescription>Create a new account to get started.</CardDescription>
@@ -88,12 +114,26 @@ export function RegisterFormComponent() {
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Input
-                id="name"
-                placeholder="Enter your name"
-                {...register("name")}
+                id="firstName"
+                placeholder="Enter your first name"
+                {...register("firstName")}
               />
-              {errors.name && (
-                <p className="text-sm text-red-500">{errors.name.message}</p>
+              {errors.firstName && (
+                <p className="text-sm text-red-500">
+                  {errors.firstName.message}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Input
+                id="lastName"
+                placeholder="Enter your last name"
+                {...register("lastName")}
+              />
+              {errors.lastName && (
+                <p className="text-sm text-red-500">
+                  {errors.lastName.message}
+                </p>
               )}
             </div>
             <div className="flex flex-col space-y-1.5">
@@ -117,6 +157,19 @@ export function RegisterFormComponent() {
               {errors.password && (
                 <p className="text-sm text-red-500">
                   {errors.password.message}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Input
+                id="confirmPassword"
+                type="password"
+                placeholder="Confirm password"
+                {...register("confirmPassword")}
+              />
+              {errors.confirmPassword && (
+                <p className="text-sm text-red-500">
+                  {errors.confirmPassword.message}
                 </p>
               )}
             </div>

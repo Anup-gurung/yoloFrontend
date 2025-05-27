@@ -1,37 +1,36 @@
 "use client";
 
-import { useRouter } from "next/navigation"; // ✅ This works in the App Router
-
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Landing from "@/assets/Landing/slider1.png";
-import i1 from "@/assets/Landing/image.png";
-import f7 from "@/assets/Landing/f7.png";
-import f2 from "@/assets/Landing/f2.png";
-import f3 from "@/assets/Landing/f3.png";
-import f4 from "@/assets/Landing/f4.png";
-import f5 from "@/assets/Landing/f5.png";
-import f6 from "@/assets/Landing/f6.png";
-import i2 from "@/assets/Landing/i2.png";
-import i3 from "@/assets/Landing/i3.png";
 import Header from "@/components/Landing/LoggedInHeader";
 import SearchBar from "@/components/customUI/Search";
-import { Card, CardContent } from "@/components/ui/card";
-import Autoplay from "embla-carousel-autoplay";
-import { Button } from "../../components/ui/button";
-import Selection from "@/components/selected";
-
+import { Button } from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+import Landing from "@/assets/Landing/slider1.png";
+import i1 from "@/assets/Landing/image.png";
 
-// Import Slider from react-slick or the appropriate library
-const guest = () => {
+type Product = {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  brand: string;
+  color: string;
+  image: string;
+  condition?: string;
+  accountId?: number;
+};
+const Guest = () => {
   const router = useRouter();
+  const [products, setProducts] = useState<Product[]>([]);
+  
 
   const plugin = React.useRef(
     Autoplay({ delay: 2000, stopOnInteraction: true })
@@ -41,74 +40,41 @@ const guest = () => {
     { id: 1, src: Landing.src },
     { id: 2, src: i1.src },
     { id: 3, src: Landing.src },
-    { id: 4, src: Landing.src },
-    { id: 5, src: Landing.src },
   ];
 
-  const fashionItems = [
-    { id: 1, image: f7, name: "sonam Poncho" },
-    { id: 2, image: f2, name: "Shrug" },
-    { id: 3, image: f3, name: "Dress" },
-    { id: 4, image: f2, name: "Shirt" },
-    { id: 5, image: f3, name: "Pants" },
-    { id: 6, image: f7, name: "Shirt" },
-  ];
+  useEffect(() => {
+    fetch("http://localhost:8765/PRODUCT-SERVICE/api/products")
+      .then((res) => res.json())
+      .then((data) => {
+        setProducts(data);
+      })
+      .catch((err) => {
+        console.error("Error fetching products:", err);
+      });
+  }, []);
 
-  const sliderSettings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slideToshow: 3,
-    slidesToScroll: 1,
-    centerMode: true,
-    centerPadding: "5px",
-    arrow: false,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          // centerPadding: '10px',
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
-    ],
-  };
   return (
     <>
       <Header className="bg-transparent text-white p-4 fixed w-full top-0 left-0 z-1" />
 
-      <section
-      // style={{ backgroundImage: `url(${Landing.src})` }}
-      >
+      {/* Hero slider with search bar */}
+      <section>
         <Carousel
           plugins={[plugin.current]}
-          className=""
           onMouseEnter={plugin.current.stop}
           onMouseLeave={plugin.current.reset}
         >
-          <CarouselContent className="">
+          <CarouselContent>
             {imageList.map((image) => (
               <CarouselItem key={image.id}>
-                <div className="">
-                  <Card>
-                    <CardContent className="flex items-center justify-center">
-                      <Image
-                        src={image.src}
-                        alt="slider"
-                        width={50}
-                        height={50}
-                        className="w-screen h-screen object-cover"
-                      />
-                    </CardContent>
-                  </Card>
+                <div className="w-full h-screen relative">
+                  <Image
+                    src={image.src}
+                    alt="slider"
+                    layout="fill"
+                    objectFit="cover"
+                    className="w-full h-full"
+                  />
                 </div>
               </CarouselItem>
             ))}
@@ -119,26 +85,33 @@ const guest = () => {
         </div>
       </section>
 
+      {/* Product listing */}
       <section>
         <div className="container mx-auto px-4 py-8">
+          <h2 className="text-2xl font-bold mb-6">Our Products</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {fashionItems.map((item) => (
-              <div key={item.id} className="border rounde-lg shadow-sm p-4">
+            {products.map((product) => (
+              <div key={product.id} className="border rounded-lg shadow-md p-4">
                 <div className="relative w-full h-80">
                   <Image
-                    src={item.image}
-                    alt={item.name}
+                    src={product.image || "/placeholder.png"}
+                    alt={product.name}
                     layout="fill"
                     objectFit="cover"
-                    className="rounded-lg filter grayscale transition-all duration-300 hover:grayscale-0 "
+                    className="rounded-lg"
                   />
                 </div>
+                <h3 className="text-lg font-semibold mt-3">{product.name}</h3>
+                <p className="text-sm text-gray-500">{product.description}</p>
+                <p className="text-sm text-gray-500">Brand: {product.brand}</p>
+                <p className="text-sm text-gray-500">Color: {product.color}</p>
+                <p className="text-sm text-gray-700 font-medium">Nu. {product.price}</p>
                 <Button
                   variant="outline"
-                  className="mt-3 font-medium flex justify-center mx-auto"
-                  onClick={() => router.push(`/home/${item.id}`)}
+                  className="mt-3 w-full"
+                  onClick={() => router.push(`/home/${product.id}`)}
                 >
-                  {item.name}
+                  View Product
                 </Button>
               </div>
             ))}
@@ -149,4 +122,4 @@ const guest = () => {
   );
 };
 
-export default guest;
+export default Guest;

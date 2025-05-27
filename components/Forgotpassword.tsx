@@ -1,11 +1,12 @@
+// app/forgot-password/page.tsx or any location you're using it
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation"; // ✅ Correct import for Next.js 13+
+import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -17,15 +18,19 @@ import {
   CardContent,
 } from "@/components/ui/card";
 
+// ✅ Zod schema
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
 });
+
+// ✅ Type inference
 type FormData = z.infer<typeof formSchema>;
 
 export function Forgotpassword() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const router = useRouter(); // ✅ Use the correct Next.js router hook
+  const router = useRouter();
 
+  // ✅ useForm setup with validation
   const {
     register,
     handleSubmit,
@@ -34,11 +39,12 @@ export function Forgotpassword() {
     resolver: zodResolver(formSchema),
   });
 
+  // ✅ Submit logic
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/user/send-otp`, // ✅ Make sure this endpoint exists
+        "http://localhost:8765/USER-SERVICE/api/users/forgot-password",
         {
           method: "POST",
           headers: {
@@ -50,7 +56,7 @@ export function Forgotpassword() {
 
       if (response.ok) {
         toast.success("OTP sent! Redirecting...");
-        router.push("/otp"); // ✅ This will now work properly
+        router.push("/otp"); // 🔁 Adjust this route if needed
       } else {
         const errorData = await response.json();
         toast.error(errorData.message || "Failed to send OTP");
@@ -58,15 +64,16 @@ export function Forgotpassword() {
     } catch (error) {
       console.error("OTP Error:", error);
       toast.error("An unexpected error occurred.");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
-    <Card className="w-[350px] h-[250px] p-5">
+    <Card className="w-[350px] p-5">
       <CardHeader className="text-left pl-1">
-        <CardTitle>Email</CardTitle>
-        <CardDescription>Recover Your Account.</CardDescription>
+        <CardTitle>Forgot Password</CardTitle>
+        <CardDescription>Recover your account by email.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -92,3 +99,5 @@ export function Forgotpassword() {
     </Card>
   );
 }
+
+export default Forgotpassword;
