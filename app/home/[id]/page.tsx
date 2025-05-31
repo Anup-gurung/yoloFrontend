@@ -1,19 +1,38 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, use } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import CartDrawer from "@/components/cart/CartDrawer";
+import { parse } from "path";
+
+type Product = {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  brand: string;
+  color: string;
+  image: string;
+  condition?: string;
+  accountId?: number;
+};
 
 export default function ProductPage() {
   const router = useRouter();
+  const { id } = useParams();
 
+  const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [quantity, setQuantity] = useState<number>(1);
+  const [allCartItems, setAllCartItems] = useState<any[]>([]);
+  const [cartItems, setCartItems] = useState([]);
 
   const colors = [
     { color: "rose", value: "bg-rose-500" },
@@ -21,33 +40,108 @@ export default function ProductPage() {
     { color: "purple", value: "bg-purple-400" },
   ];
 
-  const [cartItem, setCartItem] = useState({
-    name: "Sonam Poncho",
-    img: "/sonam-poncho.jpg",
-    price: 14000,
-    qty: 1,
-  });
+  useEffect(() => {
+    if (!id) return;
+
+    // Fetch current product details
+    fetch(`http://localhost:8765/PRODUCT-SERVICE/api/products/${id}`)
+      .then((res) => res.json())
+      .then((data) => setProduct(data))
+      .catch((err) => console.error("Failed to fetch product:", err));
+  }, [id]);
+
+  useEffect(() => {
+    // Fetch all products for related items
+    fetch(`http://localhost:8765/PRODUCT-SERVICE/api/products`)
+      .then((res) => res.json())
+      .then((data: Product[]) => {
+        // Filter out current product
+        const related = data.filter((p) => p.id.toString() !== id);
+        setRelatedProducts(related);
+      })
+      .catch((err) => console.error("Failed to fetch related products:", err));
+  }, [id]);
 
   const handleAddToCart = () => {
     if (!selectedSize || !selectedColor) {
       alert("Please select size and color!");
-
       return;
     }
-    setOpenDrawer(true);
+
+    const accountId = localStorage.getItem("accountId");
+
+    if (!accountId) {
+      alert("You must be logged in to add items to the cart.");
+      return;
+    }
+
+    const cartData = {
+      productId: product?.id,
+      name: product?.name,
+      image: product?.image,
+      price: product?.price,
+      quantity: quantity,
+      size: selectedSize,
+      color: selectedColor,
+      accountId: parseInt(accountId), // ✅ Make sure it's sent as a number
+    };
+
+    fetch("http://localhost:8765/CART-SERVICE/api/cart/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(cartData),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to add to cart");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log("Cart item added:", data);
+        setOpenDrawer(true);
+      })
+      .then((data) => {
+        console.log("Cart item added:", data);
+        setOpenDrawer(true);
+
+        // const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+        // existingCart.push(cartItem);
+        // localStorage.setItem("cart", JSON.stringify(existingCart));
+      })
+      .catch((error) => {
+        console.error("Error adding to cart:", error);
+        alert("Failed to add item to cart");
+      });
   };
+
+  if (!product) {
+    return <div className="p-6">Loading...</div>;
+  }
+
+  const cartItem = {
+    name: product.name,
+    img: product.image || "/placeholder.png",
+    price: product.price,
+    qty: quantity,
+  };
+  console.log("cartitem", cartItem);
+
+  
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <Button variant="outline" className="mb-4">
+      <Button variant="outline" className="mb-4" onClick={() => router.back()}>
         Back
       </Button>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="w-full h-auto">
           <Image
-            src="/sonam-poncho.jpg"
-            alt="Sonam Poncho"
+            src={product.image || "/placeholder.png"}
+            alt={product.name}
             width={600}
             height={800}
             className="object-cover w-full"
@@ -55,13 +149,9 @@ export default function ProductPage() {
         </div>
 
         <div>
-          <h1 className="text-3xl font-semibold mb-2">Sonam Poncho</h1>
-          <p className="text-gray-700 mb-1">Nu.14000</p>
-          <p className="text-gray-600 mb-4 text-sm">
-            One of the best textiles woven by Bhutanese Artisan. With natural
-            colors and threads. Each design crafted in the clothes symbolizes a
-            great sense of hardwork and Bhutanese cultures.
-          </p>
+          <h1 className="text-3xl font-semibold mb-2">{product.name}</h1>
+          <p className="text-gray-700 mb-1">Nu.{product.price}</p>
+          <p className="text-gray-600 mb-4 text-sm">{product.description}</p>
 
           <div className="mb-4">
             <p className="mb-1 font-medium">Sizes</p>
@@ -122,15 +212,15 @@ export default function ProductPage() {
 
       <h2 className="text-2xl font-semibold mt-16 mb-4">Related Items</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {[
-          { name: "Sonam Poncho", img: "/sonam-poncho.jpg" },
-          { name: "Yatra Hooded Jacket", img: "/yatra-hooded-jacket.jpg" },
-          { name: "Tunic Dress", img: "/tunic-dress.jpg" },
-        ].map((item, index) => (
-          <Card key={index} className="overflow-hidden">
+        {relatedProducts.map((item) => (
+          <Card
+            key={item.id}
+            className="overflow-hidden cursor-pointer"
+            onClick={() => router.push(`/home/${item.id}`)}
+          >
             <CardContent className="p-0">
               <Image
-                src={item.img}
+                src={item.image || "/placeholder.png"}
                 alt={item.name}
                 width={400}
                 height={500}
@@ -146,7 +236,7 @@ export default function ProductPage() {
       <CartDrawer
         open={openDrawer}
         onOpenChange={setOpenDrawer}
-        item={cartItem}
+        items={cartItems}
       />
     </div>
   );

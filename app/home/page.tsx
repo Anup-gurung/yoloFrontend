@@ -15,7 +15,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import Autoplay from "embla-carousel-autoplay";
+// import Autoplay from "embla-carousel-autoplay";
 import Landing from "@/assets/Landing/slider1.png";
 import i1 from "@/assets/Landing/image.png";
 
@@ -34,6 +34,7 @@ type Product = {
 const Guest = () => {
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
+  const [accountId, setAccountId] = useState<number | null>(null);
   
 
   const plugin = React.useRef(
@@ -47,6 +48,15 @@ const Guest = () => {
   ];
 
   useEffect(() => {
+    //load accpuntId from localStorage
+    const storedAccountId = localStorage.getItem("accountId");
+    if(storedAccountId){
+      setAccountId(Number(storedAccountId));
+    }else{{
+      console.log("No accountId found in localStorage");
+    }}
+    console.log(storedAccountId);
+
     fetch("http://localhost:8765/PRODUCT-SERVICE/api/products")
       .then((res) => res.json())
       .then((data) => {

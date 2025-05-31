@@ -144,35 +144,74 @@ export function LoginFormComponent() {
     resolver: zodResolver(formSchema),
   });
 
+  // const onSubmit: SubmitHandler<FormData> = async (data) => {
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await fetch("http://localhost:8765/USER-SERVICE/api/users/login", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({email:data.email, password: data.password }),
+  //     })
+  //     .then((res)=>res.json())
+  //     .then((data)=>{
+  //       if(data.accountId){
+  //         localStorage.setItem("accountId", data.accountId);
+  //       }
+  //     })
+
+      
+    
+
+  //     // if (!response.ok) {
+  //     //   const errorData = await response.json();
+  //     //   throw new Error(errorData.message || "Login failed");
+  //     // }
+
+  //     // const result = await response.json();
+
+  //     // ✅ You can store token or user data here if needed
+  //     // localStorage.setItem("token", result.token);
+
+  //     toast.success("Login successful!");
+  //     router.push("/home");
+  //   } catch (error: any) {
+  //     toast.error(error.message || "Something went wrong");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("http://localhost:8765/USER-SERVICE/api/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+  setIsLoading(true);
+  try {
+    const response = await fetch("http://localhost:8765/USER-SERVICE/api/users/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password,
+      }),
+    });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Login failed");
-      }
+    const result = await response.json();
 
-      const result = await response.json();
-
-      // ✅ You can store token or user data here if needed
-      // localStorage.setItem("token", result.token);
-
+    if (result.accountId) {
+      localStorage.setItem("accountId", result.accountId.toString());
       toast.success("Login successful!");
       router.push("/home");
-    } catch (error: any) {
-      toast.error(error.message || "Something went wrong");
-    } finally {
-      setIsLoading(false);
+    } else {
+      throw new Error("Login failed: No accountId received");
     }
-  };
+  } catch (error: any) {
+    toast.error(error.message || "Something went wrong");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <Card className="w-[350px] h-[380px] p-5">
